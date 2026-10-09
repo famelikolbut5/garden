@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ru">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Garden — маленькое волшебство</title>
+<meta name="description" content="Интерактивная ночная оранжерея: живой сад, любопытный кот и немного волшебства. Авторское веб-демо.">
+<link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"></head>
+<body>
+<main id="stage" tabindex="0" aria-label="Волшебный сад. Двигайте курсор, чтобы кот повернул голову. Нажмите на кота, чтобы поздороваться.">
+ <canvas id="scene" width="1280" height="720" aria-hidden="true"></canvas><div class="shade" aria-hidden="true"></div>
+ <header class="masthead">
+  <a class="brand" href="./" aria-label="Garden — главная"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 40C5 32 7 17 11 12c8 1 12 9 13 18 1-9 5-17 13-18 4 5 6 20-13 28Zm0-10C14 20 17 8 24 3c7 5 10 17 0 27Z"/></svg><span>Garden<small>Место для маленького чуда</small></span></a>
+  <nav aria-label="Навигация сада"><button id="garden-home" class="nav-link active">Сад</button><button id="about-keeper" class="nav-link">Хранитель</button><button id="about-garden" class="nav-link">История</button></nav>
+  <div class="utility"><button id="sound" class="sound-toggle" aria-pressed="true">Звук: вкл</button><button id="fullscreen" class="icon-button" aria-label="На весь экран" title="На весь экран"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m8 0h5v-5"/></svg></button></div>
+ </header>
+ <section class="hero-copy" aria-labelledby="hero-title">
+  <div class="moon-note"><span aria-hidden="true">☾</span> Ночная оранжерея</div>
+  <h1 id="hero-title">Здесь живёт<br>маленькое<br>волшебство.</h1>
+  <p>За шумом дня есть тихий мир.<br>Загляните в сад — вас уже ждут.</p>
+  <button id="reaction" class="greet">Познакомиться <span aria-hidden="true">✧</span></button>
+ </section>
+ <div class="keeper-note"><span class="little-star" aria-hidden="true">✦</span><span>У сада есть хранитель.<small>И кажется, вы ему понравились.</small></span></div>
+ <aside class="garden-note"><svg viewBox="0 0 36 36" aria-hidden="true"><path d="M18 30V9m0 14C5 23 5 11 5 11s13 0 13 12Zm0-6C30 17 30 5 30 5S18 5 18 17Z"/></svg><div><h2>Никуда не спешите</h2><p>Пусть весь мир немного подождёт.</p></div></aside>
+ <footer><span>Маленький мир. Большое воображение.</span><button id="credits-open" class="credit-link">Музыка: Kevin MacLeod</button></footer>
+ <div id="loading" role="status">Сад просыпается…</div>
+
+</main>
+<div class="entry" id="entry"><div class="entry-card"><span class="entry-flower" aria-hidden="true">✧</span><p>Garden</p><h2>Оставьте суету<br>за воротами.</h2><button id="enter" disabled>Сад просыпается…</button><small>Внутри звучит музыка. Её можно выключить.</small></div></div>
+<dialog id="story-dialog"><button class="close-dialog" aria-label="Закрыть">×</button><span class="dialog-flower" aria-hidden="true">✧</span><h2>Сад, который<br>замечает вас.</h2><p>Когда город засыпает, в оранжерее загораются цветы. Вода по-прежнему течёт, а маленький хранитель встречает каждого гостя.</p><p>Поведите курсором вокруг него. А чтобы поздороваться — просто нажмите на кота.</p><button class="return-button">Вернуться в сад</button></dialog>
+<dialog id="credits-dialog"><button class="close-dialog" aria-label="Закрыть">×</button><h2>Музыка сада</h2><p>“Fairytale Waltz” — Kevin MacLeod (incompetech.com).</p><p><a href="https://incompetech.com/music/royalty-free/index.html?Search=Search&amp;isrc=USUAN1100232" target="_blank" rel="noopener">Оригинальная композиция</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a></p><p>Аудио преобразовано в AAC и воспроизводится с уменьшенной громкостью и повтором.</p><p class="demo-disclosure">Garden — независимое интерактивное демо. Изображения и исходные анимации созданы с помощью генеративных инструментов.</p></dialog>
+<div hidden aria-hidden="true"><a id="layers"></a><button id="music"></button><button id="tour"></button><button id="pause"></button><p id="note"></p><output id="status"></output></div>
+<div id="record-cursor" aria-hidden="true">
+ <svg class="cursor-key" viewBox="0 0 42 46"><defs><linearGradient id="key-gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff3bc"/><stop offset=".48" stop-color="#eec36b"/><stop offset="1" stop-color="#b87b36"/></linearGradient></defs><g fill="none" stroke="url(#key-gold)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3 24 27M5 6 3 12l6 1-1 6 7 1"/><path d="M25 24c-6-6-13 4-6 8-3 8 8 11 10 4 8 3 12-8 4-10 0-7-8-9-8-2Z"/></g><path d="m24 31 3-3 3 4-3 3Z" fill="#fff0b5"/><path d="M3 3 22 24" stroke="#fff8dc" stroke-width=".7"/></svg>
+ <svg class="cursor-feather" viewBox="0 0 34 42"><defs><linearGradient id="feather-gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff7d5"/><stop offset=".55" stop-color="#efca80"/><stop offset="1" stop-color="#be8644"/></linearGradient></defs><path d="M3 2C19 5 29 15 23 27 15 28 6 22 3 2Z" fill="url(#feather-gold)" stroke="#8d633b" stroke-width=".8"/><path d="M4 4 27 37M13 17l8 1m-12-8 8 1m0 12 5 0" fill="none" stroke="#fff5cf" stroke-width="1.3" stroke-linecap="round"/><path d="m3 0 .9 2.1L6 3l-2.1.9L3 6l-.9-2.1L0 3l2.1-.9Z" fill="#fffbe7"/></svg><i></i></div>
+<script src="app.js"></script><script src="showcase.js"></script>
+</body></html>
