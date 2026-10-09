@@ -6,7 +6,7 @@
 
 ![Главный экран Garden](docs/preview.jpg)
 
-[Посмотреть видеодемо в портфолио](https://arturkolesnikov.online/#work) · [Скачать запись, 34 секунды](docs/garden-demo.mp4)
+[Посмотреть видеодемо в портфолио](https://arturkolesnikov.online/#work) · [Скачать запись, 36.2 с](docs/garden-demo.mp4)
 
 ## Взаимодействие
 
