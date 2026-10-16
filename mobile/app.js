@@ -65,7 +65,8 @@ let soundOn=true,musicOn=false,musicGain,musicBuffer,musicSource,musicPromise;
 const musicButton=document.querySelector('#music');
 const soundButton=document.querySelector('#sound'),reactionButton=document.querySelector('#reaction');
 function updateAudio(){
- soundButton.textContent=soundOn?'Звук: вкл':'Звук: выкл';soundButton.setAttribute('aria-pressed',String(soundOn));
+ const needsTap=entered&&soundOn&&audioCtx&&audioCtx.state!=='running';
+ soundButton.textContent=needsTap?'Включить звук':soundOn?'Звук: вкл':'Звук: выкл';soundButton.setAttribute('aria-pressed',String(soundOn&&!needsTap));
  musicButton.textContent=musicOn?'Музыка: вкл':'Музыка: выкл';musicButton.setAttribute('aria-pressed',String(musicOn));
  if(!audioCtx)return;
  const musicLevel=musicOn&&soundOn?.21:0;
@@ -75,11 +76,18 @@ function updateAudio(){
  status.dataset.sound=String(soundOn);status.dataset.audio=audioCtx.state;status.dataset.voiceLoaded=String(!!voiceBuffer);
 }
 async function unlockAudio(){
+ // iOS WebKit otherwise treats Web Audio as ambient audio, obeying the silent switch.
+ // Request the playback category inside the user's gesture, before starting media.
+ try{if(navigator.audioSession)navigator.audioSession.type='playback';}catch(error){console.warn('Audio session unavailable',error.name);}
  if(!audioCtx){
-  audioCtx=new AudioContext();audioCtx.onstatechange=updateAudio;voiceGain=audioCtx.createGain();voiceGain.gain.value=1.5;voiceGain.connect(audioCtx.destination);
+  const Context=window.AudioContext||window.webkitAudioContext;
+  audioCtx=new Context();audioCtx.onstatechange=updateAudio;voiceGain=audioCtx.createGain();voiceGain.gain.value=1.5;voiceGain.connect(audioCtx.destination);
   audioReady=audioBytes('meow-clean.wav').then(b=>audioCtx.decodeAudioData(b)).then(b=>{voiceBuffer=b;});
  }
- await audioCtx.resume();await audioReady;updateAudio();
+ const resumed=audioCtx.resume();
+ // Prime the output synchronously while iOS still has the tap's activation.
+ const primer=audioCtx.createBufferSource();primer.buffer=audioCtx.createBuffer(1,1,audioCtx.sampleRate);primer.connect(audioCtx.destination);primer.onended=()=>primer.disconnect();primer.start();
+ await resumed;await audioReady;updateAudio();
 }
 function stopVoice(){if(voiceSource){voiceSource.stop();voiceSource.disconnect();voiceSource=null;}}
 function startVoice(){stopVoice();if(!voiceBuffer||!reacting||paused||document.hidden)return;const offset=active.currentTime;if(offset>=voiceBuffer.duration)return;voiceSource=audioCtx.createBufferSource();voiceSource.buffer=voiceBuffer;voiceSource.connect(voiceGain);voiceSource.start(0,offset);}
@@ -154,7 +162,7 @@ musicButton.onclick=async()=>{
   await musicPromise;musicOn=!musicOn;if(musicOn)soundOn=true;updateAudio();if(paused||document.hidden)await audioCtx.suspend();
  }catch(e){status.textContent='Музыка не загрузилась. Попробуйте ещё раз.';console.warn(e)}finally{musicButton.disabled=false;}
 };
-soundButton.onclick=async()=>{try{await unlockAudio();soundOn=!soundOn;updateAudio();if(paused||document.hidden)audioCtx.suspend();}catch(e){status.textContent='Не удалось включить звук';}};
+soundButton.onclick=async()=>{const enable=!soundOn||!audioCtx||audioCtx.state!=='running';try{await unlockAudio();soundOn=enable;updateAudio();if(enable&&!musicOn)await musicButton.onclick();if(paused||document.hidden)audioCtx.suspend();}catch(e){status.textContent='Не удалось включить звук';soundButton.textContent='Включить звук';}};
 document.querySelectorAll('[data-pose]').forEach(b=>{b.disabled=true;b.addEventListener('click',()=>select(Number(b.dataset.pose)));});
 function coords(e){const r=canvas.getBoundingClientRect();return [(e.clientX-r.left)/r.width,(e.clientY-r.top)/r.height];}
 function target(e){

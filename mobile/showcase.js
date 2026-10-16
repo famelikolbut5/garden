@@ -3,9 +3,11 @@ function enableEntry(){enter.disabled=false;enter.textContent='Войти в Gar
 window.addEventListener('garden-ready',enableEntry);
 if(ready)enableEntry();
 enter.onclick=async()=>{
- enter.disabled=true;enter.textContent='Открываем ворота…';entered=true;if(!reduced)ambient.play().catch(()=>{});advance();
+ enter.disabled=true;enter.textContent='Открываем ворота…';entered=true;
  // User gesture unlocks both music and the kitten's voice. No autoplay promise.
- try{await musicButton.onclick();}catch(error){console.warn(error);}
+ const audioStart=musicButton.onclick();
+ if(!reduced)ambient.play().catch(()=>{});advance();
+ try{await audioStart;}catch(error){console.warn(error);}
  document.body.classList.add('inside-garden');entry.classList.add('leaving');setTimeout(()=>entry.hidden=true,650);
 };
 document.querySelector('#garden-home').onclick=()=>select(3);
