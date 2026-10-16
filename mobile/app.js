@@ -68,15 +68,15 @@ function updateAudio(){
  soundButton.textContent=soundOn?'Звук: вкл':'Звук: выкл';soundButton.setAttribute('aria-pressed',String(soundOn));
  musicButton.textContent=musicOn?'Музыка: вкл':'Музыка: выкл';musicButton.setAttribute('aria-pressed',String(musicOn));
  if(!audioCtx)return;
- const musicLevel=musicOn&&soundOn?.14:0;
+ const musicLevel=musicOn&&soundOn?.21:0;
  if(musicGain)musicGain.gain.setTargetAtTime(musicLevel,audioCtx.currentTime,.15);
  status.dataset.music=String(musicOn);status.dataset.musicLevel=String(musicLevel);status.dataset.musicLoaded=String(!!musicBuffer);
- voiceGain.gain.setTargetAtTime(soundOn?1:0,audioCtx.currentTime,.015);
+ voiceGain.gain.setTargetAtTime(soundOn?1.5:0,audioCtx.currentTime,.015);
  status.dataset.sound=String(soundOn);status.dataset.audio=audioCtx.state;status.dataset.voiceLoaded=String(!!voiceBuffer);
 }
 async function unlockAudio(){
  if(!audioCtx){
-  audioCtx=new AudioContext();audioCtx.onstatechange=updateAudio;voiceGain=audioCtx.createGain();voiceGain.gain.value=1;voiceGain.connect(audioCtx.destination);
+  audioCtx=new AudioContext();audioCtx.onstatechange=updateAudio;voiceGain=audioCtx.createGain();voiceGain.gain.value=1.5;voiceGain.connect(audioCtx.destination);
   audioReady=audioBytes('meow-clean.wav').then(b=>audioCtx.decodeAudioData(b)).then(b=>{voiceBuffer=b;});
  }
  await audioCtx.resume();await audioReady;updateAudio();
